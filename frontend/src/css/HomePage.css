@@ -1,0 +1,185 @@
+/* 전체 홈 페이지 스타일 */
+.homepage {
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    line-height: 1.6;
+    background-color: #f8f9fa;
+    color: #333;
+    overflow-x: hidden;
+}
+
+/* 영웅 섹션 스타일 */
+.hero-section {
+    background: linear-gradient(135deg, #20c997, #11998e);
+    height: 450px; /* 모바일 친화적인 높이로 조금 줄임 */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* 그림자 크기 감소 */
+}
+
+.hero-text {
+    text-align: center;
+    position: relative;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 25px;
+    border-radius: 10px;
+    animation: fadeIn 1.5s ease-in-out; /* 애니메이션 속도를 살짝 빠르게 조정 */
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.15); /* 그림자 강도를 줄임 */
+}
+
+.hero-text h1 {
+    font-size: 2.8em; /* 크기 살짝 줄임 */
+    margin-bottom: 10px; /* 간격 줄임 */
+    letter-spacing: 1.2px;
+    font-weight: bold;
+    text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2); /* 그림자 강도를 줄임 */
+}
+
+.hero-text p {
+    font-size: 1.2em;
+    margin-bottom: 15px; /* 간격 줄임 */
+}
+
+/* 버튼 스타일 */
+.btn-primary {
+    background-color: #20c997;
+    color: white;
+    padding: 10px 20px; /* 패딩을 줄여 더 컴팩트하게 만듦 */
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* 애니메이션 속도 조정 */
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1); /* 그림자 줄임 */
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #17a085;
+    transform: translateY(-3px);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* 그림자 크기 감소 */
+}
+
+.btn-secondary {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 18px; /* 패딩을 줄여 더 컴팩트하게 만듦 */
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* 애니메이션 속도 조정 */
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); /* 그림자 줄임 */
+    font-weight: bold;
+}
+
+.btn-secondary:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* 그림자 강도 조정 */
+}
+
+/* 주요 기능 소개 섹션 스타일 */
+.features-section {
+    padding: 50px 20px; /* 패딩을 줄여 전체 섹션을 더 컴팩트하게 */
+    text-align: center;
+    background: linear-gradient(135deg, #e8f5f4, #f8f9fa);
+}
+
+.features-section h2 {
+    font-size: 2.3em; /* 크기 살짝 줄임 */
+    margin-bottom: 30px; /* 간격 줄임 */
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 3px solid #20c997;
+    display: inline-block;
+}
+
+/* 주요 기능 카드 스타일 */
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.feature-card {
+    background-color: #ffffff;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* 그림자 강도를 줄여서 더 간결하게 */
+    border-radius: 12px;
+    padding: 20px; /* 패딩을 줄임 */
+    max-width: 300px; /* 카드 크기를 살짝 줄임 */
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s; /* 애니메이션 속도 줄임 */
+    position: relative;
+    overflow: hidden;
+    border-top: 3px solid #26a69a; /* 두께를 줄여 간소화 */
+}
+
+.feature-card:hover {
+    transform: translateY(-5px); /* 과한 효과 줄임 */
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2); /* 그림자 강도를 줄임 */
+    background-color: #f0f8ff;
+}
+
+.feature-card h3 {
+    font-size: 1.6em;
+    margin-bottom: 10px; /* 간격 줄임 */
+    color: #007bff;
+}
+
+.feature-card p {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 15px; /* 간격 줄임 */
+}
+
+/* 푸터 스타일 */
+.footer {
+    background-color: #1a535c;
+    color: #fff;
+    padding: 15px 0; /* 패딩을 줄여 컴팩트하게 */
+    text-align: center;
+    margin-top: 30px; /* 간격 줄임 */
+}
+
+.footer-bottom {
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+/* 애니메이션 추가 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 반응형 스타일 추가 */
+@media (max-width: 768px) {
+    .hero-text h1 {
+        font-size: 2.2em; /* 크기 줄임 */
+    }
+
+    .hero-text p {
+        font-size: 0.9em;
+    }
+
+    .features {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .feature-card {
+        max-width: 90%;
+        margin-bottom: 20px; /* 간격 줄임 */
+    }
+
+    .features-section h2 {
+        font-size: 1.8em; /* 크기 줄임 */
+    }
+}

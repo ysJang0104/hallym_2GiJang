@@ -1,0 +1,59 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+function LifestyleTips({ vascularAge }) {
+    const [tips, setTips] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (vascularAge && vascularAge !== '데이터 없음') {
+            fetchLifestyleTips(vascularAge);
+        }
+    }, [vascularAge]);
+
+    const fetchLifestyleTips = async (vascularAge) => {
+        setLoading(true);
+        setError('');
+        try {
+            const response = await axios.post('http://localhost:5080/lifestyle_tips', {
+                vascular_age: vascularAge
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setTips(response.data.lifestyle_tips || []);
+        } catch (error) {
+            console.error("건강 팁 API 호출 중 오류 발생:", error);
+            setError('건강 팁을 가져오는 데 문제가 발생했습니다. 나중에 다시 시도해 주세요.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return <p>건강 팁을 불러오는 중입니다...</p>;
+    }
+
+    if (error) {
+        return <p className="error-message">{error}</p>;
+    }
+
+    return (
+        <div className="lifestyle-tips">
+            <h3>건강 팁</h3>
+            {tips.length > 0 ? (
+                <ul>
+                    {tips.map((tip, index) => (
+                        <li key={index}>{tip}</li>
+                    ))}
+                </ul>
+            ) : (
+                <p>추천 건강 팁이 없습니다.</p>
+            )}
+        </div>
+    );
+}
+
+export default LifestyleTips;

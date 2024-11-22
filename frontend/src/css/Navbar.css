@@ -1,0 +1,177 @@
+/* 전체 네비게이션 바 스타일 */
+.navbar {
+    background-color: #ffffff;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
+    position: relative;
+    z-index: 10;
+}
+
+/* 내부 컨테이너 */
+.div_inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 로고 스타일 */
+.logo img {
+    height: 50px;
+}
+
+/* 메뉴 토글 버튼 스타일 (모바일 전용) */
+.menu_toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.menu_toggle div {
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 3px 0;
+    transition: all 0.3s ease;
+}
+
+/* 데스크탑 메뉴 스타일 */
+.top_menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+/* 메뉴 항목 스타일 */
+.top_menu > li {
+    position: relative;
+}
+
+.top_menu > li > a, .top_menu > li > button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 15px 20px;
+    transition: color 0.3s ease;
+}
+
+.top_menu > li > a:hover, .top_menu > li > button:hover {
+    color: #007bff;
+}
+
+/* 서브 메뉴 기본 스타일 (숨겨진 상태) */
+.account_submenu {
+    list-style: none;
+    padding: 10px 0;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 10;
+    min-width: 180px;
+    visibility: hidden;
+}
+
+.account-menu:hover .account_submenu,
+.account_submenu.open {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 서브 메뉴 항목 스타일 */
+.account_submenu li {
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.account_submenu li:hover {
+    background-color: #f0f4f7;
+    border-radius: 5px;
+}
+
+/* 링크 스타일 */
+a, .link-button {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+    background: none;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+a:hover, .link-button:hover {
+    color: #007bff;
+}
+
+/* 반응형 스타일 (모바일 최적화) */
+@media (max-width: 768px) {
+    .menu_toggle {
+        display: flex; /* 모바일에서만 보이도록 설정 */
+    }
+
+    .top_menu {
+        display: none; /* 기본적으로 숨김 처리 */
+    }
+
+    .top_menu.open {
+        display: flex; /* 메뉴가 열리면 보이도록 설정 */
+        flex-direction: column;
+        background-color: #ffffff;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 200px;
+        padding: 20px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    .account_submenu {
+        position: static;
+        box-shadow: none;
+        border-radius: 0;
+        background-color: #ffffff;
+    }
+
+    .account_submenu li a, .account_submenu li button {
+        color: #333;
+    }
+}
+
+/* 메뉴 활성화 시 밑줄 효과 */
+.top_menu > li > button::after,
+.top_menu > li > a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: #007bff;
+    transition: width 0.3s;
+    margin: 4px auto 0 auto;
+}
+
+.top_menu > li > button:hover::after,
+.top_menu > li > a:hover::after {
+    width: 100%; /* 호버 시 밑줄 효과 */
+}
+
+
+김민주님의 혈관 나이 예측 결과
+점수: 29 / 100
+
+혈관 분석 결과
+김민주님의 혈관 나이 예측 결과는 72점입니다.
+현재 노화 속도는 보통으로 예상됩니다.

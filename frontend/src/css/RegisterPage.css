@@ -1,0 +1,115 @@
+/* 전체 페이지 배경 및 정렬 */
+.register-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* 회원가입 컨테이너 스타일 */
+.register-container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
+    width: 380px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.25); /* 상호작용 효과로 컨테이너 움직임 */
+}
+
+.register-container h2 {
+    margin-bottom: 25px;
+    text-align: center;
+    color: #0072ff; /* 청록색과 파란색의 대비 */
+    font-weight: 700;
+    font-size: 1.9em;
+    letter-spacing: 1.2px;
+}
+
+/* 폼 그룹 스타일 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #0056b3; /* 좀 더 진한 청록색 계열 */
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #20c997; /* 청록색으로 포커스 효과 */
+    outline: none;
+    box-shadow: 0 0 8px rgba(32, 201, 151, 0.25); /* 청록색 그림자 */
+}
+
+/* 회원가입 버튼 스타일 */
+.register-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #20c997;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.register-button:hover {
+    background-color: #1aa179;
+    transform: translateY(-2px);
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.register-button:active {
+    transform: translateY(0);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 경고 메시지 스타일 */
+.alert {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+    .register-container {
+        width: 85%;
+        padding: 25px;
+    }
+
+    .register-container h2 {
+        font-size: 1.6em;
+    }
+
+    .form-group input {
+        padding: 10px;
+    }
+
+    .register-button {
+        padding: 10px;
+    }
+}
