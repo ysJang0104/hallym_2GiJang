@@ -8,6 +8,7 @@ function LoginPage() {
     const [credentials, setCredentials] = useState({ username: '', password: '' });
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [welcomeMessage, setWelcomeMessage] = useState('');  // 환영 메시지 상태 추가
     const navigate = useNavigate();
     const { token, login } = useAuth();
 
@@ -47,6 +48,7 @@ function LoginPage() {
             try {
                 setLoading(true);
                 setErrorMessage('');
+                setWelcomeMessage('');  // 로그인 시도 전 기존 메시지 초기화
 
                 const response = await axios.post(
                     `${API_BASE_URL}/login`,
@@ -59,7 +61,14 @@ function LoginPage() {
 
                 const { access_token, user_name } = response.data;
                 login(access_token, user_name);
-                navigate('/');
+                
+                // 로그인 성공 후 환영 메시지 설정
+                setWelcomeMessage(`${user_name}님, 환영합니다!`);
+
+                // 일정 시간 후 홈 페이지로 리다이렉트
+                setTimeout(() => {
+                    navigate('/');
+                }, 2000);
             } catch (error) {
                 setErrorMessage(extractErrorMessage(error));
             } finally {
@@ -110,6 +119,11 @@ function LoginPage() {
                     {errorMessage && (
                         <div className="alert alert-danger" role="alert">
                             {errorMessage}
+                        </div>
+                    )}
+                    {welcomeMessage && (
+                        <div className="alert alert-success" role="alert">
+                            {welcomeMessage}
                         </div>
                     )}
                     <button

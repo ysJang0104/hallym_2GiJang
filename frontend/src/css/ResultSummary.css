@@ -1,0 +1,143 @@
+/* 전체 컨테이너 스타일 */
+.result-summary.container {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+/* 제목 스타일 */
+.result-summary h1 {
+    font-size: 2em;
+    color: #4a90e2;
+    margin-bottom: 15px;
+}
+
+.result-summary h2, .result-summary h3 {
+    font-size: 1.5em;
+    color: #2a69ac;
+    margin-bottom: 10px;
+}
+
+/* 맥파 유형 및 솔루션 테이블 스타일 */
+.wave-type-section {
+    margin-bottom: 30px;
+}
+
+.wave-type-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.wave-type-table th,
+.wave-type-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+.wave-type-table th {
+    background-color: #4a90e2;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.wave-type-table td {
+    background-color: #fff;
+}
+
+/* 건강 상태 요약 섹션 스타일 */
+.health-summary-section {
+    background-color: #e9f5fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.health-summary-section p {
+    font-size: 1.2em;
+    margin: 5px 0;
+}
+
+/* APG 파형 그래프 스타일 */
+.apg-graph {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.apg-graph h2 {
+    margin-bottom: 20px;
+    font-size: 1.4em;
+}
+
+/* 피크 분석 섹션 스타일 */
+.peak-analysis-section {
+    background-color: #f0faff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.peak-analysis-section ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.peak-analysis-section ul li {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.peak-analysis-section li strong {
+    color: #f77f00;
+}
+
+.peak-analysis-section li em {
+    font-weight: 600;
+    color: #4a90e2;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .result-summary.container {
+        padding: 10px;
+    }
+
+    .result-summary h1 {
+        font-size: 1.8em;
+    }
+
+    .result-summary h2, .result-summary h3 {
+        font-size: 1.3em;
+    }
+
+    .wave-type-table th,
+    .wave-type-table td {
+        font-size: 0.9em;
+        padding: 8px;
+    }
+
+    .health-summary-section p {
+        font-size: 1em;
+    }
+
+    .apg-graph {
+        padding: 15px;
+    }
+}

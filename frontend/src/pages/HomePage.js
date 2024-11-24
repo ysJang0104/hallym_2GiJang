@@ -19,13 +19,7 @@ function HomePage() {
             description: '혈관 나이 분석 결과를 확인하고, 자신의 건강 상태를 이해해보세요.',
             link: '/results',
             linkText: '결과 보기',
-        },
-        {
-            title: '건강 관리 팁',
-            description: '분석 결과에 따라 맞춤형 건강 관리 팁을 받아보세요.',
-            link: '/lifestyle_tips',
-            linkText: '건강 팁 보기',
-        },
+        }
     ];
 
     return (
