@@ -105,7 +105,7 @@ function ResultSummary() {
             {/* 맥파 유형 및 솔루션 테이블 */}
             <div className="wave-type-section">
                 <h3>맥파 유형 및 건강 조언</h3>
-                <p>본 분석은 사용자의 PPG 데이터를 통해 18개의 맥파 유형 중 하나로 분류하며, 해당 유형에 따라 맞춤형 솔루션을 제공합니다. 
+                <p>본 분석은 사용자의 APG 데이터를 통해 18개의 맥파 유형 중 하나로 분류하며, 해당 유형에 따라 맞춤형 솔루션을 제공합니다. 
                 <br></br>맥파 유형은 혈관의 탄성도, 저항성, 순환 상태 등을 반영하여 분류됩니다.</p>
                 <table className="wave-type-table">
                     <thead>
