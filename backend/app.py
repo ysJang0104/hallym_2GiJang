@@ -155,6 +155,7 @@ def login():
     else:
         return jsonify({"error": "로그인에 실패했습니다"}), 401
 
+# 맥파 타입별 추천 솔루션
 def vascular_health_advice(wave_type):
     advice = {}
 
@@ -229,31 +230,6 @@ def vascular_health_advice(wave_type):
 
     return advice
 
-def find_apg_peaks(apg_array, height=None, distance=None):
-    """
-    APG 파형에서 의미있는 피크를 찾는 개선된 함수
-
-    Parameters:
-    - apg_array: numpy array of APG values
-    - height: 최소 피크 높이 (기본값: 신호 표준편차의 0.5배)
-    - distance: 피크 간 최소 거리 (기본값: 신호 길이의 5%)
-    """
-    if height is None:
-        height = 0.5 * np.std(apg_array)
-    if distance is None:
-        distance = int(len(apg_array) * 0.05)
-        
-    # 노이즈 제거를 위한 기본적인 전처리
-    smoothed_signal = savgol_filter(apg_array, window_length=11, polyorder=3)
-    
-    # 피크 찾기
-    peaks, properties = find_peaks(smoothed_signal,
-                                   height=height,
-                                   distance=distance,
-                                   prominence=height*0.5)
-    
-    return peaks, properties
-
 def classify_wave_type_improved(A_B_ratio, C_A_ratio, D_A_ratio, time_intervals=None):
     """
     개선된 맥파 타입 분류 함수
@@ -306,6 +282,7 @@ def normalize_ratio(ratio, range_values):
     min_val, max_val = range_values
     return np.clip((ratio - min_val) / (max_val - min_val), 0, 1)
 
+
 def calculate_confidence_score(A_B_ratio, C_A_ratio, D_A_ratio):
     """측정의 신뢰도 점수 계산"""
     # 각 비율이 정상 범위 내에 있는지 확인
@@ -315,9 +292,78 @@ def calculate_confidence_score(A_B_ratio, C_A_ratio, D_A_ratio):
     scores.append(1.0 if 0.1 <= D_A_ratio <= 0.6 else 0.5)
     return np.mean(scores)
 
-# API: 혈관 분석
+def analyze_apg_signal(file_path):
+    # 파일 불러오기
+    data = pd.read_csv(file_path)
+
+    # 시계열 데이터가 들어 있는 열 선택 및 처음 200개 데이터만 받기
+    ppg_signal = data['APG Wave'].values[:200]
+
+    # a, b, c, d, e 포인트 찾기
+    # 1. a 포인트 (첫 번째 피크 찾기 - 가장 높은 양수 값이어야 함)
+    peaks_a, _ = find_peaks(ppg_signal, height=0)
+    if len(peaks_a) > 0:
+        a_point = peaks_a[np.argmax(ppg_signal[peaks_a])]
+        apg_a = ppg_signal[a_point]
+    else:
+        a_point = None
+        apg_a = None
+
+    # 2. b 포인트 (a 이후의 최저점 찾기)
+    b_point = None
+    apg_b = None
+    if a_point is not None:
+        b_point = np.argmin(ppg_signal[a_point:]) + a_point
+        apg_b = ppg_signal[b_point]
+
+    # 3. c 포인트 (b 이후의 첫 번째 상승 피크)
+    c_point = None
+    apg_c = None
+    if b_point is not None:
+        peaks_c, _ = find_peaks(ppg_signal[b_point:], height=0)
+        if len(peaks_c) > 0:
+            c_point = peaks_c[0] + b_point
+            apg_c = ppg_signal[c_point]
+
+    # 4. d 포인트 (c 이후의 최저점 찾기 - 민감도를 높이기 위해 기울기 활용)
+    d_point = None
+    apg_d = None
+    if c_point is not None:
+        gradient = np.gradient(ppg_signal[c_point:])
+        d_candidates = np.where(gradient > 0)[0]  # 기울기가 양수로 전환되는 지점 찾기
+        if len(d_candidates) > 0:
+            d_point = d_candidates[0] + c_point
+            apg_d = ppg_signal[d_point]
+
+    # 5. e 포인트 (d 이후의 작은 피크)
+    e_point = None
+    apg_e = None
+    if d_point is not None:
+        peaks_e, _ = find_peaks(ppg_signal[d_point:], height=0)
+        if len(peaks_e) > 0:
+            e_point = peaks_e[0] + d_point
+            apg_e = ppg_signal[e_point]
+    # 분석 데이터 반환
+    return {
+        'peaks': {
+            'A': apg_a,
+            'B': apg_b,
+            'C': apg_c,
+            'D': apg_d,
+            'E': apg_e,
+        },
+        'peak_idx':{
+            'A_idx': a_point,
+            'B_idx': b_point,
+            'C_idx': c_point,
+            'D_idx': d_point,
+            'E_idx': e_point
+        },
+        'apg_wave': ppg_signal.tolist()
+    }
+
+# 예측 API
 @app.route('/analyze-vascular', methods=['POST'])
-@jwt_required()
 def analyze_vascular():
     try:
         # 데이터 업로드 처리
@@ -327,72 +373,44 @@ def analyze_vascular():
                 return jsonify({"error": "올바른 형식의 CSV 파일을 업로드해주세요."}), 400
 
             # 파일 저장 및 읽기
-            upload_folder = app.config['UPLOAD_FOLDER']
+            upload_folder = 'uploads'
             if not os.path.exists(upload_folder):
                 os.makedirs(upload_folder)
             file_path = os.path.join(upload_folder, file.filename)
             file.save(file_path)
-            df = pd.read_csv(file_path)
-
-            if df.empty or 'APG Wave' not in df.columns:
-                return jsonify({"error": "유효한 APG 데이터를 찾을 수 없습니다."}), 400
-            apg_values = df['APG Wave'].dropna().values
 
         else:
-            data = request.get_json()
-            apg_values = data.get('apg_values')
-            if not apg_values or not isinstance(apg_values, list):
-                return jsonify({'error': 'Invalid apg_values. Must be a list with at least 5 elements'}), 400
+            return jsonify({"error": "파일이 존재하지 않습니다."}), 400
 
-        # 입력 데이터를 Numpy 배열로 변환
-        apg_array = np.array(apg_values, dtype=np.float32)
+        # analyze_apg_signal 함수 호출
+        analysis_result = analyze_apg_signal(file_path)
 
-        # 데이터 길이 조정
-        model = get_model()  # 모델 로드
-        expected_length = model.input_shape[1]  # 모델이 기대하는 입력 길이
-        if len(apg_array) != expected_length:
-            if len(apg_array) > expected_length:
-                apg_array = apg_array[:expected_length]  # 초과된 데이터 자르기
-            else:
-                apg_array = np.pad(apg_array, (0, expected_length - len(apg_array)), 'constant')  # 부족한 데이터 패딩
+        # 주요 피크 추출
+        a_peak = analysis_result['peaks']['A']
+        b_peak = analysis_result['peaks']['B']
+        c_peak = analysis_result['peaks']['C']
+        d_peak = analysis_result['peaks']['D']
+        e_peak = analysis_result['peaks']['E']
 
-        # 피크 탐지 및 유효성 확인
-        positive_peaks, properties = find_apg_peaks(apg_array)
-        if len(positive_peaks) < 5:
-            return jsonify({'error': 'Not enough peaks found to classify'}), 400
+        a_idx = analysis_result['peak_idx']['A_idx']
+        b_idx = analysis_result['peak_idx']['B_idx']
+        c_idx = analysis_result['peak_idx']['C_idx']
+        d_idx = analysis_result['peak_idx']['D_idx']
+        e_idx = analysis_result['peak_idx']['E_idx']
 
-        # 주요 피크 추출 (시간 순서대로)
-        sorted_indices = np.sort(positive_peaks[:5])
-        a_peak, b_peak, c_peak, d_peak, e_peak = apg_array[sorted_indices]
-
-        if a_peak == 0:
-            return jsonify({'error': 'Invalid data: a_peak cannot be zero for ratio calculation'}), 400
+        if None in [a_peak, b_peak, c_peak, d_peak, e_peak]:
+            return jsonify({'error': '피크 값을 찾는 데 충분한 데이터가 없습니다.'}), 400
 
         # 피크 비율 계산 (절대값 사용)
         ab_ratio = abs(b_peak) / abs(a_peak)
         ca_ratio = abs(c_peak) / abs(a_peak)
         da_ratio = abs(d_peak) / abs(a_peak)
 
-        # 맥파 타입 분류
+        # 맥파 타입 분류 - 별도의 함수로 분류 진행 (이미 정의된 함수 사용)
         wave_type = classify_wave_type_improved(ab_ratio, ca_ratio, da_ratio)
 
         # 솔루션 제공
         advice = vascular_health_advice(wave_type)
-
-        # 데이터 전처리 및 모델 예측
-        processed_data = preprocess_input_data([apg_array])  # expected_length 제거
-        prediction_result = predict(processed_data, model)
-
-        # 예측 오류 확인
-        if prediction_result.get('error'):
-            return jsonify({"error": prediction_result['error']}), 500
-
-        # 예측된 클래스 가져오기 (분류 모델)
-        predicted_classes = prediction_result.get('predictions', [])
-        vascular_age = predicted_classes[0] if predicted_classes else '데이터 없음'
-
-        # aging_speed 설정 (모델에서 제공하지 않는 경우 기본값)
-        aging_speed = '데이터 없음'
 
         # 응답 데이터 구성
         response = {
@@ -403,15 +421,20 @@ def analyze_vascular():
                 'D': float(d_peak),
                 'E': float(e_peak),
             },
+            'index' :{
+                'A_idx': int(a_idx),
+                'B_idx': int(b_idx),
+                'C_idx': int(c_idx),
+                'D_idx': int(d_idx),
+                'E_idx': int(e_idx),                
+            } ,
             'ratios': {
                 'A/B': float(ab_ratio),
                 'C/A': float(ca_ratio),
                 'D/A': float(da_ratio),
             },
             'wave_type': wave_type,
-            'vascular_age': vascular_age,  # 클래스 인덱스 유지
-            'apg_wave': apg_array.tolist(),
-            'positive_peaks_indices': positive_peaks.tolist(),
+            'apg_wave': analysis_result['apg_wave'],
             'advice': advice
         }
 
@@ -429,6 +452,7 @@ def analyze_vascular():
     except Exception as e:
         logger.error(f"혈관 분석 처리 중 예기치 않은 오류 발생: {e}")
         return jsonify({"error": f"혈관 분석 중 오류가 발생했습니다: {str(e)}"}), 500
+
 
 if __name__ == '__main__':
     host = os.getenv('FLASK_HOST', '0.0.0.0')  # 기본값 0.0.0.0

@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 import numpy as np
 from tensorflow.keras.models import load_model
+from tensorflow.keras.activations import softmax
 import logging
 
 # .env 파일에서 환경 변수 로드
@@ -25,10 +26,13 @@ except Exception as e:
     logger.error(f"모델 로드 실패: {e}")
     model = None
 
+from sklearn.preprocessing import StandardScaler
+
 def preprocess_input_data(data_array, expected_length=None):
     """
     입력 데이터 전처리 함수
     """
+    scaler = StandardScaler() 
     data_processed = []
     for series in data_array:
         # 데이터 길이 조정
@@ -37,11 +41,12 @@ def preprocess_input_data(data_array, expected_length=None):
             if current_length > expected_length:
                 series = series[:expected_length]
             elif current_length < expected_length:
-                pad_length = expected_length - current_length
+                pad_length = expected_length - len(series)
                 series = np.pad(series, (0, pad_length), 'constant')
         
-        # 데이터 정규화 없이 그대로 사용
-        series = series.reshape(-1, 1)  # 1D -> 2D (필요 시)
+        # 데이터 정규화
+        series = scaler.fit_transform(series.reshape(-1, 1))  # 1D -> 2D 및 정규화
+        
         data_processed.append(series)
     
     data_processed = np.array(data_processed)
@@ -51,20 +56,17 @@ def preprocess_input_data(data_array, expected_length=None):
     
     return data_processed
 
-def predict(input_data, model):
-    """
-    모델 예측 함수
-    """
+
+def predict(processed_data, model):
     try:
-        # 모델이 로드되지 않은 경우 오류 반환
-        if model is None:
-            return {'error': 'Model is not loaded.'}
-        
-        # 모델 예측
-        predictions = model.predict(input_data)
-        predicted_classes = np.argmax(predictions, axis=1)
-        
-        return {'predictions': predicted_classes.tolist()}
+        logits = model.predict(processed_data)  # 소프트맥스가 적용되지 않은 경우
+        probabilities = softmax(logits).numpy()  # 소프트맥스 적용
+        predicted_classes = np.argmax(probabilities, axis=1)
+        confidence_scores = np.max(probabilities, axis=1)
+        return {
+            'predictions': predicted_classes.tolist(),
+            'confidence_scores': confidence_scores.tolist()
+        }
     except Exception as e:
         logger.error(f"예측 중 오류 발생: {e}")
         return {'error': str(e)}
