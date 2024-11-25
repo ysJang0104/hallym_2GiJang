@@ -15,6 +15,7 @@ function UploadPage() {
     const navigate = useNavigate();
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5080';
 
+    // 유저명과 결과 데이터를 세션에 저장하고 유지
     useEffect(() => {
         const storedUserName = sessionStorage.getItem('userName');
         const storedResultData = sessionStorage.getItem('resultData');
@@ -40,26 +41,29 @@ function UploadPage() {
         }
     }, [resultData]);
 
+    // 파일 선택 처리
     const handleFileChange = (event) => {
-        const selectedFile = event.target.files[0];
+        const file = event.target.files[0];
         const maxSizeInBytes = 5 * 1024 * 1024;
 
-        if (selectedFile && !selectedFile.name.endsWith('.csv')) {
+        if (file && !file.name.endsWith('.csv')) {
             setError('CSV 파일만 업로드할 수 있습니다.');
             setSelectedFile(null);
-        } else if (selectedFile && selectedFile.size > maxSizeInBytes) {
+        } else if (file && file.size > maxSizeInBytes) {
             setError('파일 크기가 5MB를 초과할 수 없습니다.');
             setSelectedFile(null);
         } else {
-            setSelectedFile(selectedFile);
+            setSelectedFile(file);
             setError('');
         }
     };
 
+    // 유저 이름 입력 처리
     const handleUserNameChange = (e) => {
         setUserName(e.target.value);
     };
 
+    // 파일 업로드 및 분석 요청
     const handleUpload = async () => {
         if (!selectedFile) {
             setError('파일을 선택해주세요.');
@@ -102,6 +106,7 @@ function UploadPage() {
                 }
             });
 
+            // 업로드 결과 데이터 저장
             sessionStorage.setItem('resultData', JSON.stringify(response.data));
             setResultData(response.data);
 
@@ -110,7 +115,7 @@ function UploadPage() {
 
         } catch (err) {
             console.error('분석 요청 중 오류 발생:', err);
-            setError('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+            setError(err.response?.data?.error || '분석 중 오류가 발생했습니다. 다시 시도해주세요.');
         } finally {
             setLoading(false);
         }

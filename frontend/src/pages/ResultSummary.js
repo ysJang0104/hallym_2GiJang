@@ -38,7 +38,6 @@ function ResultSummary() {
             recommendations: [],
         },
         apg_wave = [],
-        positive_peaks_indices = [],
         peaks = {
             A: null,
             B: null,
@@ -46,7 +45,23 @@ function ResultSummary() {
             D: null,
             E: null,
         },
+        index ={
+            A_idx: null,
+            B_idx: null,
+            C_idx: null,
+            D_idx: null,
+            E_idx: null,
+        }
     } = resultData;
+
+    // 피크 데이터와 APG 파형 데이터 설정
+    const peakPoints = [
+        { label: 'A', index: index.A_idx, value: peaks.A },
+        { label: 'B', index: index.B_idx, value: peaks.B },
+        { label: 'C', index: index.C_idx, value: peaks.C },
+        { label: 'D', index: index.D_idx, value: peaks.D },
+        { label: 'E', index: index.E_idx, value: peaks.E }
+    ].filter(peak => peak.value !== null && peak.index !== -1); // 값이 null이 아닌 피크들만 선택
 
     // APG 파형 데이터와 피크 표시를 위한 설정
     const data = {
@@ -60,20 +75,14 @@ function ResultSummary() {
                 pointRadius: 0,
                 borderWidth: 1.5,
             },
-            {
-                label: '주요 피크 (A, B, C, D, E)',
-                data: [
-                    peaks.A ? { x: positive_peaks_indices[0], y: peaks.A } : null,
-                    peaks.B ? { x: positive_peaks_indices[1], y: peaks.B } : null,
-                    peaks.C ? { x: positive_peaks_indices[2], y: peaks.C } : null,
-                    peaks.D ? { x: positive_peaks_indices[3], y: peaks.D } : null,
-                    peaks.E ? { x: positive_peaks_indices[4], y: peaks.E } : null,
-                ].filter(point => point !== null),
-                pointBackgroundColor: 'orange',
-                pointBorderColor: 'orange',
+            ...peakPoints.map((peak) => ({
+                label: `${peak.label} 피크`,
+                data: [{ x: peak.index, y: peak.value }],
+                pointBackgroundColor: 'red',
+                pointBorderColor: 'red',
                 pointRadius: 6,
                 showLine: false,
-            },
+            })),
         ],
     };
 
@@ -102,11 +111,11 @@ function ResultSummary() {
             <h1>혈관 건강 예측 결과</h1>
             <h2>안녕하세요, {userName}님!</h2>
 
-            {/* 맥파 유형 및 솔루션 테이블 */}
+            {/* 맥파 타입 테이블 */}
             <div className="wave-type-section">
                 <h3>맥파 유형 및 건강 조언</h3>
-                <p>본 분석은 사용자의 APG 데이터를 통해 18개의 맥파 유형 중 하나로 분류하며, 해당 유형에 따라 맞춤형 솔루션을 제공합니다. 
-                <br></br>맥파 유형은 혈관의 탄성도, 저항성, 순환 상태 등을 반영하여 분류됩니다.</p>
+                <p>본 분석은 사용자의 APG 데이터를 통해 18개의 맥파 유형 중 하나로 분류하며, 해당 유형에 따라 맞춤형 솔루션을 제공합니다.</p>
+                <br></br>맥파 유형은 혈관의 탄성도, 저항성, 순환 상태 등을 반영하여 분류됩니다.
                 <table className="wave-type-table">
                     <thead>
                         <tr>
@@ -121,7 +130,7 @@ function ResultSummary() {
                             <td>{advice.description}</td>
                             <td>
                                 <ul>
-                                    {advice.recommendations.length > 0 ? (
+                                {advice.recommendations.length > 0 ? (
                                         advice.recommendations.map((rec, idx) => (
                                             <li key={idx}>{rec}</li>
                                         ))
@@ -137,7 +146,7 @@ function ResultSummary() {
 
             {/* APG 파형 그래프 */}
             <div className="apg-graph">
-                <h2>APG 파형 그래프</h2>
+                <h2>APG 파형 그래프 및 주요 피크</h2>
                 <Line data={data} options={options} />
             </div>
 

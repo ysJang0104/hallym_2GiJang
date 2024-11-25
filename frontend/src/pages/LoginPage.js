@@ -8,15 +8,9 @@ function LoginPage() {
     const [credentials, setCredentials] = useState({ username: '', password: '' });
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [welcomeMessage, setWelcomeMessage] = useState('');  // 환영 메시지 상태 추가
+    const [welcomeMessage, setWelcomeMessage] = useState('');  
     const navigate = useNavigate();
     const { token, login } = useAuth();
-
-    useEffect(() => {
-        if (token) {
-            navigate('/');
-        }
-    }, [token, navigate]);
 
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5080';
 
@@ -48,7 +42,7 @@ function LoginPage() {
             try {
                 setLoading(true);
                 setErrorMessage('');
-                setWelcomeMessage('');  // 로그인 시도 전 기존 메시지 초기화
+                setWelcomeMessage('');  
 
                 const response = await axios.post(
                     `${API_BASE_URL}/login`,
@@ -65,10 +59,7 @@ function LoginPage() {
                 // 로그인 성공 후 환영 메시지 설정
                 setWelcomeMessage(`${user_name}님, 환영합니다!`);
 
-                // 일정 시간 후 홈 페이지로 리다이렉트
-                setTimeout(() => {
-                    navigate('/');
-                }, 2000);
+                navigate('/');
             } catch (error) {
                 setErrorMessage(extractErrorMessage(error));
             } finally {
@@ -87,6 +78,19 @@ function LoginPage() {
         <div className="login-page">
             <div className="login-container">
                 <h2>로그인</h2>
+
+                {/* 오류 메시지와 환영 메시지 상단에 표시 */}
+                {errorMessage && (
+                    <div className="alert alert-danger" role="alert">
+                        {errorMessage}
+                    </div>
+                )}
+                {welcomeMessage && (
+                    <div className="alert alert-success" role="alert">
+                        {welcomeMessage}
+                    </div>
+                )}
+
                 <form onSubmit={handleLogin}>
                     <div className="form-group">
                         <label htmlFor="username">아이디</label>
@@ -116,16 +120,6 @@ function LoginPage() {
                             autoComplete="current-password"
                         />
                     </div>
-                    {errorMessage && (
-                        <div className="alert alert-danger" role="alert">
-                            {errorMessage}
-                        </div>
-                    )}
-                    {welcomeMessage && (
-                        <div className="alert alert-success" role="alert">
-                            {welcomeMessage}
-                        </div>
-                    )}
                     <button
                         type="submit"
                         className={`login-button ${loading ? 'loading' : ''}`}
@@ -135,6 +129,7 @@ function LoginPage() {
                         {loading ? '로그인 중...' : '로그인'}
                     </button>
                 </form>
+                
                 <div className="register-link">
                     <p>
                         아직 계정이 없으신가요?{' '}
